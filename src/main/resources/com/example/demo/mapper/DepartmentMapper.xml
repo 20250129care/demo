@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.DepartmentMapper">
+
+  <select id="existsById" parameterType="string">
+    SELECT EXISTS (
+      SELECT
+        id
+      FROM
+        department
+      WHERE
+        id = #{id}
+    )
+  </select>
+
+  <select id="existsByIdList" parameterType="java.util.List">
+    SELECT
+      COUNT(DISTINCT id) = ${idList.size}
+    FROM
+      department
+    WHERE
+      id IN
+      <foreach collection="idList" item="id" open="(" close=")" separator=",">
+      #{id}
+      </foreach>
+  </select>
+
+  <select id="findAll" resultType="com.example.demo.mapper.Department">
+    SELECT
+      id,
+      name,
+      is_deleted
+    FROM
+      department
+    ORDER BY
+      id ASC
+  </select>
+
+</mapper>

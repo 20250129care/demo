@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+
+  <!-- １件取得 -->
+  <select id="existsById" parameterType="java.lang.String">
+    SELECT EXISTS (
+      SELECT
+        id
+      FROM
+        user
+      WHERE
+        id = #{id}
+    )
+  </select>
+
+  <select id="existsByIdList" parameterType="java.util.List">
+    SELECT
+      COUNT(DISTINCT id) = ${idList.size}
+    FROM
+      user
+    WHERE
+      id IN
+      <foreach collection="idList" item="id" open="(" close=")" separator=",">
+      #{id}
+      </foreach>
+  </select>
+
+  <!-- 登録 -->
+  <insert id="insert" parameterType="com.example.demo.mapper.User">
+    INSERT INTO
+      user (id, family_name, first_name, dept_id, version)
+    VALUES
+      (#{id}, #{familyName}, #{firstName}, #{deptId}, #{version})
+  </insert>
+
+  <insert id="insertList" parameterType="java.util.List">
+    INSERT INTO
+      user (id, family_name, first_name, dept_id, version)
+    VALUES
+      <foreach collection="entityList" item="entity" separator=",">
+      (#{entity.id}, #{entity.familyName}, #{entity.firstName}, #{entity.deptId}, #{entity.version})
+      </foreach>
+  </insert>
+
+  <!-- 更新 -->
+  <update id="update" parameterType="com.example.demo.mapper.User">
+    UPDATE
+      user
+    SET
+      family_name = #{familyName},
+      first_name = #{firstName},
+      dept_id = #{deptId},
+      version = #{version} + 1
+    WHERE
+      id = #{id}
+      AND version = #{version}
+  </update>
+
+  <update id="updateList" parameterType="java.util.List">
+    UPDATE
+      user
+    SET
+      family_name = CASE
+        <foreach collection="entityList" item="entity" separator=" ">
+        WHEN id = #{entity.id} THEN #{entity.familyName}
+        </foreach>
+        ELSE family_name -- id がリストに含まれない場合は familyName を変更しない
+      END,
+      first_name = CASE
+        <foreach collection="entityList" item="entity" separator=" ">
+        WHEN id = #{entity.id} THEN #{entity.firstName}
+        </foreach>
+        ELSE first_name -- id がリストに含まれない場合は firstName を変更しない
+      END,
+      dept_id = CASE
+        <foreach collection="entityList" item="entity" separator=" ">
+        WHEN id = #{entity.id} THEN #{entity.deptId}
+        </foreach>
+        ELSE dept_id -- id がリストに含まれない場合は deptId を変更しない
+      END,
+      version = CASE
+        <foreach collection="entityList" item="entity" separator=" ">
+        WHEN id = #{entity.id} THEN #{entity.version} + 1
+        </foreach>
+        ELSE version -- id がリストに含まれない場合は version を変更しない
+      END
+    WHERE
+      (id, version) IN
+      <foreach collection="entityList" item="entity" open="(" close=")" separator=",">
+      (#{entity.id}, #{entity.version})
+      </foreach>
+  </update>
+
+</mapper>

@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserSummaryMapper">
+
+  <!-- NOTE: resultTypeにパッケージのクラスを指定すればresultMapの定義が不要 -->
+  <select id="find" parameterType="com.example.demo.mapper.UserSummaryCondition" resultType="com.example.demo.mapper.UserSummary">
+    SELECT
+      name,
+      dept_id,
+      dept_name,
+      last_updated_at,
+      user_id,
+      user_version
+    FROM
+      user_summary
+    <where>
+      <if test="name != null">
+      AND name = #{name}
+      </if>
+      <if test="deptId != null">
+      AND dept_id = ${deptId}
+      </if>
+      <if test="beginUpdatedAt != null">
+      <![CDATA[
+      AND last_updated_at >= #{beginUpdatedAt}
+      ]]> 
+      </if>
+      <if test="endUpdatedAt != null">
+      <![CDATA[
+      AND last_updated_at <= #{endUpdatedAt}
+      ]]> 
+      </if>
+    </where>
+    ORDER BY
+      user_id ASC
+  </select>
+
+  <insert id="copyFromUser" parameterType="java.lang.String">
+    INSERT INTO
+      user_summary (name, dept_id, dept_name, last_updated_at, user_id, user_version)
+    SELECT
+      CONCAT(o.family_name, o.first_name) AS name,
+      o.dept_id,
+      d.name AS dept_name,
+      CURDATE() AS last_updated_at,
+      o.id AS user_id,
+      o.version AS user_version
+    FROM
+      user AS o
+    INNER JOIN
+      department AS d
+      ON o.dept_id = d.id
+    WHERE
+      o.id = #{id}
+  </insert>
+
+  <insert id="copyListFromUser" parameterType="java.util.List">
+    INSERT INTO
+      user_summary (name, dept_id, dept_name, last_updated_at, user_id, user_version)
+    SELECT
+      CONCAT(o.family_name, o.first_name) AS name,
+      o.dept_id,
+      d.name AS dept_name,
+      CURDATE() AS last_updated_at,
+      o.id AS user_id,
+      o.version AS user_version
+    FROM
+      user AS o
+    INNER JOIN
+      department AS d
+      ON o.dept_id = d.id
+    WHERE
+      o.id IN
+      <foreach collection="idList" item="id" open="(" close=")" separator=",">
+      #{id}
+      </foreach>
+  </insert>
+
+  <update id="modifyFromUser" parameterType="java.lang.String">
+    UPDATE
+      user_summary AS os
+    SET
+      name = (
+        SELECT
+          CONCAT(o.family_name, o.first_name)
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      ),
+      dept_id = (
+        SELECT
+          o.dept_id
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      ),
+      dept_name = (
+        SELECT
+          d.name
+        FROM
+          user AS o
+        INNER JOIN
+          department AS d
+          ON o.dept_id = d.id
+        WHERE
+          o.id = os.user_id
+      ),
+      last_updated_at = CURDATE(),
+      user_version = (
+        SELECT
+          o.version
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      )
+    WHERE
+      os.user_id = #{id}
+  </update>
+
+  <update id="modifyListFromUser" parameterType="java.util.List">
+    UPDATE
+      user_summary AS os
+    SET
+      name = (
+        SELECT
+          CONCAT(o.family_name, o.first_name)
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      ),
+      dept_id = (
+        SELECT
+          o.dept_id
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      ),
+      dept_name = (
+        SELECT
+          d.name
+        FROM
+          user AS o
+        INNER JOIN
+          department AS d
+          ON o.dept_id = d.id
+        WHERE
+          o.id = os.user_id
+      ),
+      last_updated_at = CURDATE(),
+      user_version = (
+        SELECT
+          o.version
+        FROM
+          user AS o
+        WHERE
+          o.id = os.user_id
+      )
+    WHERE
+      os.user_id IN
+      <foreach collection="idList" item="id" open="(" close=")" separator=",">
+      #{id}
+      </foreach>
+  </update>
+
+</mapper>

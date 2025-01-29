@@ -1,0 +1,54 @@
+services:
+  mysql:
+    image: mysql:8.4.4
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: test
+      MYSQL_PASSWORD: test
+      TZ: Asia/Tokyo
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+
+  wiremock:
+    image: wiremock/wiremock:3.10.0
+    container_name: wiremock
+    environment:
+      - TZ=Asia/Tokyo
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./docker/wiremock:/home/wiremock
+
+  app:
+    image: amazoncorretto:21.0.6
+    container_name: springboot-app
+    environment:
+      - DB_URL=jdbc:mysql://mysql:3306/mydb
+      - DB_USERNAME=test
+      - DB_PASSWORD=test
+      - EXTERNAL_BASE_URL=http://wiremock:8080
+      - EXTERNAL_API_KEY=abcd1234
+      - TZ=Asia/Tokyo
+    depends_on:
+      - mysql
+      - wiremock
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - ~/log:/var/log
+      - gradle-cache:/root/.gradle
+    working_dir: /app
+    command: >
+      sh -c "./gradlew clean build --no-daemon --refresh-dependencies &&
+      java -jar /app/build/libs/demo-0.0.1-SNAPSHOT.jar"
+
+volumes:
+  mysql-data:
+  gradle-cache:
