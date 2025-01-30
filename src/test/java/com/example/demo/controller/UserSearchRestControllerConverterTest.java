@@ -44,6 +44,9 @@ class UserSearchRestControllerConverterTest {
         private static final LocalDate BEGIN_UPDATED_AT = LocalDate.of(2025, 1, 1);
         private static final LocalDate END_UPDATED_AT = LocalDate.of(2025, 1, 1);
 
+        private static final Integer PAGE_NO = 1;
+        private static final Integer PAGE_SIZE = 100;
+
         private UserSearchRequest request = null;
 
         @BeforeEach
@@ -54,7 +57,9 @@ class UserSearchRestControllerConverterTest {
                     BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                     DEPT_ID,
                     BEGIN_UPDATED_AT,
-                    END_UPDATED_AT);
+                    END_UPDATED_AT,
+                    PAGE_NO,
+                    PAGE_SIZE);
         }
 
         @DisplayName("正常終了")
@@ -74,6 +79,8 @@ class UserSearchRestControllerConverterTest {
             assertThat(param.getDeptId()).isEqualTo(DEPT_ID);
             assertThat(param.getBeginUpdatedAt()).isEqualTo(BEGIN_UPDATED_AT);
             assertThat(param.getEndUpdatedAt()).isEqualTo(END_UPDATED_AT);
+            assertThat(param.getPageNo()).isEqualTo(PAGE_NO);
+            assertThat(param.getPageSize()).isEqualTo(PAGE_SIZE);
         }
 
     }
@@ -92,6 +99,10 @@ class UserSearchRestControllerConverterTest {
         private static final LocalDate LAST_UPDATED_AT = LocalDate.of(2025, 1, 1);
         private static final String BASE_USER_ID = "20250101120055111";
         private static final Integer USER_VERSION = 0;
+
+        private static final Integer PREV_PAGE_NO = null;
+        private static final Integer NEXT_PAGE_NO = 2;
+        private static final Integer PAGE_SIZE = 100;
 
         private UserSearchResult result = null;
 
@@ -120,7 +131,10 @@ class UserSearchRestControllerConverterTest {
                             DEPT_NAME,
                             LAST_UPDATED_AT,
                             BASE_USER_ID + "_03",
-                            USER_VERSION)));
+                            USER_VERSION)),
+                    PREV_PAGE_NO,
+                    NEXT_PAGE_NO,
+                    PAGE_SIZE);
         }
 
         @DisplayName("正常終了")
@@ -135,6 +149,10 @@ class UserSearchRestControllerConverterTest {
             // -----------------------------------------------------------------
             // 実行結果確認
             // -----------------------------------------------------------------
+
+            assertThat(response.getPrevPageNo()).isEqualTo(PREV_PAGE_NO);
+            assertThat(response.getNextPageNo()).isEqualTo(NEXT_PAGE_NO);
+            assertThat(response.getPageSize()).isEqualTo(PAGE_SIZE);
 
             List<UserSearchResponseData> responseList = response.getList();
             assertThat(responseList).hasSize(3);

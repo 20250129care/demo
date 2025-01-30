@@ -64,7 +64,7 @@ public class UserSearchServiceImpl implements UserSearchService {
 
         // 検索結果を作成する
         logger.debug("検索結果を作成する");
-        UserSearchResult result = converter.convertToResult(entityList);
+        UserSearchResult result = converter.convertToResult(entityList, param.getPageNo(), param.getPageSize());
 
         // 外部APIで操作ログを保存する
         logger.debug("外部APIで操作ログを保存する");

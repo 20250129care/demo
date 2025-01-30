@@ -2,6 +2,9 @@ package com.example.demo.controller;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
@@ -33,5 +36,16 @@ public class UserSearchRequest {
 
     /** 更新日（終了）。 */
     private LocalDate endUpdatedAt;
+
+    /** ページ番号。1から始まる。 */
+    @NotNull
+    @Min(1)
+    private Integer pageNo;
+
+    /** １ページで表示する件数。最大100件。 */
+    @NotNull
+    @Min(1)
+    @Max(100)
+    private Integer pageSize;
 
 }

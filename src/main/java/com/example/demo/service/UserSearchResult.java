@@ -16,4 +16,13 @@ public class UserSearchResult {
     /** データリスト。 */
     private List<UserSearchResultData> list;
 
+    /** 前のページのページ番号。前のページがなければNULL。 */
+    private Integer prevPageNo;
+
+    /** 次のページのページ番号。次のページがなければNULL。 */
+    private Integer nextPageNo;
+
+    /** １ページで表示する件数。最大100件。 */
+    private Integer pageSize;
+
 }

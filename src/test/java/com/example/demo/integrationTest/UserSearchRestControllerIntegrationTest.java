@@ -33,7 +33,9 @@ class UserSearchRestControllerIntegrationTest {
                                   "name": "苗字名前",
                                   "dept_id": "01",
                                   "begin_updated_at": "2025-01-01",
-                                  "end_updated_at": "2025-01-01"
+                                  "end_updated_at": "2025-01-01",
+                                  "page_no": 1,
+                                  "page_size": 100
                                 }
                                 """)
                         .contentType(MediaType.APPLICATION_JSON_VALUE))

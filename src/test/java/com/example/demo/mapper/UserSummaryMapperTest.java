@@ -38,6 +38,9 @@ class UserSummaryMapperTest {
     private static final LocalDate LAST_UPDATED_AT2 = LocalDate.of(2025, 7, 1);
     private static final LocalDate LAST_UPDATED_AT3 = LocalDate.of(2025, 12, 31);
 
+    private static final Integer limit = 100;
+    private static final Integer offset = 0;
+
     // NOTE: テスト対象とモックを定義する
     // NOTE: テストに使用するパラメータとは関係ない定義を外だしすることで見やすくする
 
@@ -72,7 +75,9 @@ class UserSummaryMapperTest {
                     BASE_NAME + "0",
                     null,
                     null,
-                    null);
+                    null,
+                    limit,
+                    offset);
 
             // -----------------------------------------------------------------
             // テスト実行
@@ -115,7 +120,9 @@ class UserSummaryMapperTest {
                     null,
                     null,
                     LAST_UPDATED_AT3,
-                    null);
+                    null,
+                    limit,
+                    offset);
 
             // -----------------------------------------------------------------
             // テスト実行
@@ -144,7 +151,9 @@ class UserSummaryMapperTest {
                     null,
                     null,
                     null,
-                    LAST_UPDATED_AT1);
+                    LAST_UPDATED_AT1,
+                    limit,
+                    offset);
 
             // -----------------------------------------------------------------
             // テスト実行
@@ -173,7 +182,9 @@ class UserSummaryMapperTest {
                     BASE_NAME + "0",
                     "01",
                     LAST_UPDATED_AT2,
-                    LAST_UPDATED_AT2);
+                    LAST_UPDATED_AT2,
+                    limit,
+                    offset);
 
             // -----------------------------------------------------------------
             // テスト実行

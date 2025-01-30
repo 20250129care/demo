@@ -40,7 +40,7 @@ docker compose restart wiremock
 
 ```bash
 # ユーザ一覧取得
-curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"begin_updated_at\":\"2025-01-01\"}"  http://localhost:8080/api/users/search
+curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"begin_updated_at\":\"2025-01-01\",\"page_no\":1,\"page_size\":100}"  http://localhost:8080/api/users/search
 
 # ユーザ作成
 curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"family_name\":\"田中\",\"first_name\":\"太郎\",\"dept_id\":\"01\"}" http://localhost:8080/api/users/create

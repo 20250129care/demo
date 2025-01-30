@@ -25,11 +25,16 @@ public class UserSearchServiceImplConverter {
      * @return ユーザ概要の検索条件
      */
     public UserSummaryCondition convertToCondition(UserSearchParam param) {
+        Integer limit = param.getPageSize() + 1;
+        Integer offset = (param.getPageNo() - 1) * param.getPageSize();
+
         UserSummaryCondition condition = new UserSummaryCondition(
                 param.getName(),
                 param.getDeptId(),
                 param.getBeginUpdatedAt(),
-                param.getEndUpdatedAt());
+                param.getEndUpdatedAt(),
+                limit,
+                offset);
         return condition;
     }
 
@@ -37,11 +42,17 @@ public class UserSearchServiceImplConverter {
      * エンティティリストをユーザ検索結果に変換する。
      * 
      * @param entityList ユーザ概要エンティティリスト
+     * @param pageNo ページ番号
+     * @param pageSize 1ページで表示する件数
      * @return ユーザ検索結果
      */
-    public UserSearchResult convertToResult(List<UserSummary> entityList) {
+    public UserSearchResult convertToResult(List<UserSummary> entityList, Integer pageNo, Integer pageSize) {
+        Integer prevPageNo = pageNo > 1 ? pageNo - 1 : null;
+        Integer nextPageNo = entityList.size() > pageSize ? pageNo + 1 : null;
+
         List<UserSearchResultData> list = entityList
                 .stream()
+                .limit(pageSize)
                 .map(entity -> {
                     UserSearchResultData result = new UserSearchResultData(
                             entity.getName(),
@@ -54,7 +65,11 @@ public class UserSearchServiceImplConverter {
                 })
                 .toList();
 
-        UserSearchResult result = new UserSearchResult(list);
+        UserSearchResult result = new UserSearchResult(
+                list,
+                prevPageNo,
+                nextPageNo,
+                pageSize);
 
         return result;
     }

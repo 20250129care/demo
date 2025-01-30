@@ -44,6 +44,9 @@ class UserSearchServiceImplConverterTest {
         private static final LocalDate BEGIN_UPDATED_AT = LocalDate.of(2025, 1, 1);
         private static final LocalDate END_UPDATED_AT = LocalDate.of(2025, 1, 1);
 
+        private static final Integer PAGE_NO = 1;
+        private static final Integer PAGE_SIZE = 100;
+
         private UserSearchParam param = null;
 
         @BeforeEach
@@ -54,7 +57,9 @@ class UserSearchServiceImplConverterTest {
                     BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                     DEPT_ID,
                     BEGIN_UPDATED_AT,
-                    END_UPDATED_AT);
+                    END_UPDATED_AT,
+                    PAGE_NO,
+                    PAGE_SIZE);
         }
 
         @DisplayName("正常終了")
@@ -130,11 +135,127 @@ class UserSearchServiceImplConverterTest {
             // テスト実行
             // -----------------------------------------------------------------
 
-            UserSearchResult result = converter.convertToResult(entityList);
+            UserSearchResult result = converter.convertToResult(entityList, 1, 3);
 
             // -----------------------------------------------------------------
             // 実行結果確認
             // -----------------------------------------------------------------
+
+            assertThat(result.getPrevPageNo()).isNull();
+            assertThat(result.getNextPageNo()).isNull();
+            assertThat(result.getPageSize()).isEqualTo(3);
+
+            List<UserSearchResultData> resultList = result.getList();
+            assertThat(resultList).hasSize(3);
+            UserSearchResultData result1 = resultList.get(0);
+            assertThat(result1.getName()).isEqualTo(BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1");
+            assertThat(result1.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result1.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result1.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result1.getUserId()).isEqualTo(BASE_USER_ID + "_01");
+            assertThat(result1.getUserVersion()).isEqualTo(USER_VERSION);
+            UserSearchResultData result2 = resultList.get(1);
+            assertThat(result2.getName()).isEqualTo(BASE_FAMILY_NAME + "2" + BASE_FIRST_NAME + "2");
+            assertThat(result2.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result2.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result2.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result2.getUserId()).isEqualTo(BASE_USER_ID + "_02");
+            assertThat(result2.getUserVersion()).isEqualTo(USER_VERSION);
+            UserSearchResultData result3 = resultList.get(2);
+            assertThat(result3.getName()).isEqualTo(BASE_FAMILY_NAME + "3" + BASE_FIRST_NAME + "3");
+            assertThat(result3.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result3.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result3.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result3.getUserId()).isEqualTo(BASE_USER_ID + "_03");
+            assertThat(result3.getUserVersion()).isEqualTo(USER_VERSION);
+        }
+
+        @DisplayName("正常終了")
+        @Test
+        void testOK2() {
+            // -----------------------------------------------------------------
+            // テスト実行
+            // -----------------------------------------------------------------
+
+            UserSearchResult result = converter.convertToResult(entityList, 1, 2);
+
+            // -----------------------------------------------------------------
+            // 実行結果確認
+            // -----------------------------------------------------------------
+
+            assertThat(result.getPrevPageNo()).isNull();
+            assertThat(result.getNextPageNo()).isEqualTo(2);
+            assertThat(result.getPageSize()).isEqualTo(2);
+
+            List<UserSearchResultData> resultList = result.getList();
+            assertThat(resultList).hasSize(2);
+            UserSearchResultData result1 = resultList.get(0);
+            assertThat(result1.getName()).isEqualTo(BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1");
+            assertThat(result1.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result1.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result1.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result1.getUserId()).isEqualTo(BASE_USER_ID + "_01");
+            assertThat(result1.getUserVersion()).isEqualTo(USER_VERSION);
+            UserSearchResultData result2 = resultList.get(1);
+            assertThat(result2.getName()).isEqualTo(BASE_FAMILY_NAME + "2" + BASE_FIRST_NAME + "2");
+            assertThat(result2.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result2.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result2.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result2.getUserId()).isEqualTo(BASE_USER_ID + "_02");
+            assertThat(result2.getUserVersion()).isEqualTo(USER_VERSION);
+        }
+
+        @DisplayName("正常終了")
+        @Test
+        void testOK3() {
+            // -----------------------------------------------------------------
+            // テスト実行
+            // -----------------------------------------------------------------
+
+            UserSearchResult result = converter.convertToResult(entityList, 2, 2);
+
+            // -----------------------------------------------------------------
+            // 実行結果確認
+            // -----------------------------------------------------------------
+
+            assertThat(result.getPrevPageNo()).isEqualTo(1);
+            assertThat(result.getNextPageNo()).isEqualTo(3);
+            assertThat(result.getPageSize()).isEqualTo(2);
+
+            List<UserSearchResultData> resultList = result.getList();
+            assertThat(resultList).hasSize(2);
+            UserSearchResultData result1 = resultList.get(0);
+            assertThat(result1.getName()).isEqualTo(BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1");
+            assertThat(result1.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result1.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result1.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result1.getUserId()).isEqualTo(BASE_USER_ID + "_01");
+            assertThat(result1.getUserVersion()).isEqualTo(USER_VERSION);
+            UserSearchResultData result2 = resultList.get(1);
+            assertThat(result2.getName()).isEqualTo(BASE_FAMILY_NAME + "2" + BASE_FIRST_NAME + "2");
+            assertThat(result2.getDeptId()).isEqualTo(DEPT_ID);
+            assertThat(result2.getDeptName()).isEqualTo(DEPT_NAME);
+            assertThat(result2.getLastUpdatedAt()).isEqualTo(LAST_UPDATED_AT);
+            assertThat(result2.getUserId()).isEqualTo(BASE_USER_ID + "_02");
+            assertThat(result2.getUserVersion()).isEqualTo(USER_VERSION);
+        }
+        
+        @DisplayName("正常終了")
+        @Test
+        void testOK4() {
+            // -----------------------------------------------------------------
+            // テスト実行
+            // -----------------------------------------------------------------
+
+            UserSearchResult result = converter.convertToResult(entityList, 2, 3);
+
+            // -----------------------------------------------------------------
+            // 実行結果確認
+            // -----------------------------------------------------------------
+
+            assertThat(result.getPrevPageNo()).isEqualTo(1);
+            assertThat(result.getNextPageNo()).isNull();
+            assertThat(result.getPageSize()).isEqualTo(3);
 
             List<UserSearchResultData> resultList = result.getList();
             assertThat(resultList).hasSize(3);

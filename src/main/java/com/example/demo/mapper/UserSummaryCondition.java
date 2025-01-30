@@ -27,4 +27,10 @@ public class UserSummaryCondition {
     /** 更新日（終了）。 */
     private LocalDate endUpdatedAt;
 
+    /** リミット。1以上。 */
+    private Integer limit;
+
+    /** オフセット。0以上。 */
+    private Integer offset;
+
 }

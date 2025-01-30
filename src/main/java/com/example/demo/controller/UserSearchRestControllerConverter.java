@@ -29,7 +29,9 @@ public class UserSearchRestControllerConverter {
                 request.getName(),
                 request.getDeptId(),
                 request.getBeginUpdatedAt(),
-                request.getEndUpdatedAt());
+                request.getEndUpdatedAt(),
+                request.getPageNo(),
+                request.getPageSize());
         return param;
     }
 
@@ -54,7 +56,11 @@ public class UserSearchRestControllerConverter {
                 })
                 .toList();
 
-        UserSearchResponse response = new UserSearchResponse(responseList);
+        UserSearchResponse response = new UserSearchResponse(
+                responseList,
+                result.getPrevPageNo(),
+                result.getNextPageNo(),
+                result.getPageSize());
 
         return response;
     }

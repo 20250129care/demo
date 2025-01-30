@@ -67,6 +67,11 @@ class UserSearchServiceImplTest {
         private static final String BASE_USER_ID = "20250101120055111";
         private static final Integer USER_VERSION = 0;
 
+        private static final Integer PAGE_NO = 1;
+        private static final Integer PAGE_SIZE = 100;
+        private static final Integer PREV_PAGE_NO = null;
+        private static final Integer NEXT_PAGE_NO = 2;
+
         private UserSearchParam param = null;
         private UserSummaryCondition condition = null;
         private List<UserSummary> entityList = null;
@@ -80,13 +85,17 @@ class UserSearchServiceImplTest {
                     BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                     DEPT_ID,
                     BEGIN_UPDATED_AT,
-                    END_UPDATED_AT);
+                    END_UPDATED_AT,
+                    PAGE_NO,
+                    PAGE_SIZE);
 
             condition = new UserSummaryCondition(
                     BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                     DEPT_ID,
                     BEGIN_UPDATED_AT,
-                    END_UPDATED_AT);
+                    END_UPDATED_AT,
+                    PAGE_NO,
+                    PAGE_SIZE);
 
             entityList = List.of(
                     new UserSummary(
@@ -132,7 +141,10 @@ class UserSearchServiceImplTest {
                             DEPT_NAME,
                             LAST_UPDATED_AT,
                             BASE_USER_ID + "_03",
-                            USER_VERSION)));
+                            USER_VERSION)),
+                    PREV_PAGE_NO,
+                    NEXT_PAGE_NO,
+                    PAGE_SIZE);
         }
 
         @DisplayName("正常終了")
@@ -152,7 +164,7 @@ class UserSearchServiceImplTest {
 
             doReturn(result)
                     .when(converter)
-                    .convertToResult(any());
+                    .convertToResult(any(), anyInt(), anyInt());
 
             doNothing()
                     .when(externalApiLogic)
@@ -167,6 +179,10 @@ class UserSearchServiceImplTest {
             // -----------------------------------------------------------------
             // 実行結果確認
             // -----------------------------------------------------------------
+
+            assertThat(actual.getPrevPageNo()).isEqualTo(PREV_PAGE_NO);
+            assertThat(actual.getNextPageNo()).isEqualTo(NEXT_PAGE_NO);
+            assertThat(actual.getPageSize()).isEqualTo(PAGE_SIZE);
 
             List<UserSearchResultData> actualList = actual.getList();
             assertThat(actualList).hasSize(3);
@@ -195,7 +211,7 @@ class UserSearchServiceImplTest {
             // NOTE: 呼び出されるメソッドが想定通りであること
             verify(converter, times(1)).convertToCondition(eq(param));
             verify(userSummaryMapper, times(1)).find(eq(condition));
-            verify(converter, times(1)).convertToResult(eq(entityList));
+            verify(converter, times(1)).convertToResult(eq(entityList), eq(PAGE_NO), eq(PAGE_SIZE));
             verify(externalApiLogic, times(1)).logOperation(eq("ユーザ検索"), eq(OPERATOR));
         }
 

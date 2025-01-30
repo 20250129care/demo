@@ -88,6 +88,11 @@ class UserSearchRestControllerTest {
             private static final String BASE_USER_ID = "20250101120055111";
             private static final Integer VERSION = 0;
 
+            private static final Integer PAGE_NO = 1;
+            private static final Integer PAGE_SIZE = 100;
+            private static final Integer PREV_PAGE_NO = null;
+            private static final Integer NEXT_PAGE_NO = 2;
+
             private UserSearchRequest request = null;
             private UserSearchParam param = null;
             private UserSearchResult result = null;
@@ -101,13 +106,17 @@ class UserSearchRestControllerTest {
                         BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                         DEPT_ID,
                         BEGIN_UPDATED_AT,
-                        END_UPDATED_AT);
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE);
 
                 param = new UserSearchParam(
                         BASE_FAMILY_NAME + "1" + BASE_FIRST_NAME + "1",
                         DEPT_ID,
                         BEGIN_UPDATED_AT,
-                        END_UPDATED_AT);
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE);
 
                 result = new UserSearchResult(List.of(
                         new UserSearchResultData(
@@ -130,7 +139,10 @@ class UserSearchRestControllerTest {
                                 DEPT_NAME,
                                 LAST_UPDATED_AT,
                                 BASE_USER_ID + "_03",
-                                VERSION)));
+                                VERSION)),
+                        PREV_PAGE_NO,
+                        NEXT_PAGE_NO,
+                        PAGE_SIZE);
 
                 response = new UserSearchResponse(List.of(
                         new UserSearchResponseData(
@@ -153,7 +165,10 @@ class UserSearchRestControllerTest {
                                 DEPT_NAME,
                                 LAST_UPDATED_AT,
                                 BASE_USER_ID + "_03",
-                                VERSION)));
+                                VERSION)),
+                        PREV_PAGE_NO,
+                        NEXT_PAGE_NO,
+                        PAGE_SIZE);
             }
 
             @DisplayName("正常終了")
@@ -282,6 +297,9 @@ class UserSearchRestControllerTest {
             private static final LocalDate BEGIN_UPDATE_AT = LocalDate.of(2025, 1, 1);
             private static final LocalDate END_UPDATED_AT = LocalDate.of(2025, 12, 31);
 
+            private static final Integer PAGE_NO = 1;
+            private static final Integer PAGE_SIZE = 100;
+
             private static final String VALIDATION_ERROR_CODE = "901";
             private static final String VALIDATION_ERROR_MESSAGE = "バリデーションエラーが発生しました";
 
@@ -292,7 +310,9 @@ class UserSearchRestControllerTest {
                         "",
                         DEPT_ID,
                         BEGIN_UPDATE_AT,
-                        END_UPDATED_AT));
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         VALIDATION_ERROR_CODE,
                         VALIDATION_ERROR_MESSAGE,
@@ -318,7 +338,9 @@ class UserSearchRestControllerTest {
                         "12345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901",
                         DEPT_ID,
                         BEGIN_UPDATE_AT,
-                        END_UPDATED_AT));
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         VALIDATION_ERROR_CODE,
                         VALIDATION_ERROR_MESSAGE,
@@ -364,7 +386,9 @@ class UserSearchRestControllerTest {
                         NAME,
                         DEPT_ID,
                         BEGIN_UPDATE_AT,
-                        END_UPDATED_AT));
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         "904",
                         "ヘッダのエラーが発生しました",
@@ -389,7 +413,9 @@ class UserSearchRestControllerTest {
                         NAME,
                         "1",
                         BEGIN_UPDATE_AT,
-                        END_UPDATED_AT));
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         VALIDATION_ERROR_CODE,
                         VALIDATION_ERROR_MESSAGE,
@@ -415,7 +441,9 @@ class UserSearchRestControllerTest {
                         NAME,
                         "123",
                         BEGIN_UPDATE_AT,
-                        END_UPDATED_AT));
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        PAGE_SIZE));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         VALIDATION_ERROR_CODE,
                         VALIDATION_ERROR_MESSAGE,
@@ -441,12 +469,156 @@ class UserSearchRestControllerTest {
                         "",
                         "",
                         null,
+                        null,
+                        null,
                         null));
                 String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
                         VALIDATION_ERROR_CODE,
                         VALIDATION_ERROR_MESSAGE,
                         List.of("name:1以上、100以下の桁数です。",
-                                "deptId:部署IDは「2桁の数字」形式です。")));
+                                "deptId:部署IDは「2桁の数字」形式です。",
+                                "pageNo:値は必須です。",
+                                "pageSize:値は必須です。")));
+
+                // -------------------------------------------------------------
+                // テスト実行・実行結果確認
+                // -------------------------------------------------------------
+
+                mockMvc.perform(
+                        post(URL)
+                                .header(OPERATOR_KEY, OPERATOR_VALUE)
+                                .content(requestJson)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseJson));
+            }
+
+            @DisplayName("page_no:null")
+            @Test
+            void testNG8() throws Exception {
+                String requestJson = objectMapper.writeValueAsString(new UserSearchRequest(
+                        NAME,
+                        DEPT_ID,
+                        BEGIN_UPDATE_AT,
+                        END_UPDATED_AT,
+                        null,
+                        PAGE_SIZE));
+                String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
+                        VALIDATION_ERROR_CODE,
+                        VALIDATION_ERROR_MESSAGE,
+                        List.of("pageNo:値は必須です。")));
+
+                // -------------------------------------------------------------
+                // テスト実行・実行結果確認
+                // -------------------------------------------------------------
+
+                mockMvc.perform(
+                        post(URL)
+                                .header(OPERATOR_KEY, OPERATOR_VALUE)
+                                .content(requestJson)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseJson));
+            }
+
+            @DisplayName("page_no:0")
+            @Test
+            void testNG9() throws Exception {
+                String requestJson = objectMapper.writeValueAsString(new UserSearchRequest(
+                        NAME,
+                        DEPT_ID,
+                        BEGIN_UPDATE_AT,
+                        END_UPDATED_AT,
+                        0,
+                        PAGE_SIZE));
+                String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
+                        VALIDATION_ERROR_CODE,
+                        VALIDATION_ERROR_MESSAGE,
+                        List.of("pageNo:1以上の数値です。")));
+
+                // -------------------------------------------------------------
+                // テスト実行・実行結果確認
+                // -------------------------------------------------------------
+
+                mockMvc.perform(
+                        post(URL)
+                                .header(OPERATOR_KEY, OPERATOR_VALUE)
+                                .content(requestJson)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseJson));
+            }
+
+            @DisplayName("page_size:null")
+            @Test
+            void testNG10() throws Exception {
+                String requestJson = objectMapper.writeValueAsString(new UserSearchRequest(
+                        NAME,
+                        DEPT_ID,
+                        BEGIN_UPDATE_AT,
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        null));
+                String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
+                        VALIDATION_ERROR_CODE,
+                        VALIDATION_ERROR_MESSAGE,
+                        List.of("pageSize:値は必須です。")));
+
+                // -------------------------------------------------------------
+                // テスト実行・実行結果確認
+                // -------------------------------------------------------------
+
+                mockMvc.perform(
+                        post(URL)
+                                .header(OPERATOR_KEY, OPERATOR_VALUE)
+                                .content(requestJson)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseJson));
+            }
+
+            @DisplayName("page_size:0")
+            @Test
+            void testNG11() throws Exception {
+                String requestJson = objectMapper.writeValueAsString(new UserSearchRequest(
+                        NAME,
+                        DEPT_ID,
+                        BEGIN_UPDATE_AT,
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        0));
+                String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
+                        VALIDATION_ERROR_CODE,
+                        VALIDATION_ERROR_MESSAGE,
+                        List.of("pageSize:1以上の数値です。")));
+
+                // -------------------------------------------------------------
+                // テスト実行・実行結果確認
+                // -------------------------------------------------------------
+
+                mockMvc.perform(
+                        post(URL)
+                                .header(OPERATOR_KEY, OPERATOR_VALUE)
+                                .content(requestJson)
+                                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                        .andExpect(status().isBadRequest())
+                        .andExpect(content().json(responseJson));
+            }
+
+            @DisplayName("page_size:101")
+            @Test
+            void testNG12() throws Exception {
+                String requestJson = objectMapper.writeValueAsString(new UserSearchRequest(
+                        NAME,
+                        DEPT_ID,
+                        BEGIN_UPDATE_AT,
+                        END_UPDATED_AT,
+                        PAGE_NO,
+                        101));
+                String responseJson = objectMapper.writeValueAsString(new ErrorResponse(
+                        VALIDATION_ERROR_CODE,
+                        VALIDATION_ERROR_MESSAGE,
+                        List.of("pageSize:100以下の数値です。")));
 
                 // -------------------------------------------------------------
                 // テスト実行・実行結果確認

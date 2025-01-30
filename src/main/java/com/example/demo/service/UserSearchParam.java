@@ -25,4 +25,10 @@ public class UserSearchParam {
     /** 更新日（終了）。 */
     private LocalDate endUpdatedAt;
 
+    /** ページ番号。1から始まる。 */
+    private Integer pageNo;
+
+    /** 1ページで表示する件数。最大100件。 */
+    private Integer pageSize;
+
 }

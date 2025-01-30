@@ -33,6 +33,7 @@
     </where>
     ORDER BY
       user_id ASC
+    LIMIT #{limit} OFFSET #{offset}
   </select>
 
   <insert id="copyFromUser" parameterType="java.lang.String">
