@@ -1,5 +1,18 @@
 # SpringBoot勉強用プロジェクト
 
+## 事前準備
+
+### Windows
+
+docker\mysql\my.cnfを読み取り専用にする。読み取り専用でないとMySQLで設定が読み込まれない。
+
+### Linux/Mac
+
+```bash
+# アクセス権限を644にする。644でないとMySQLで設定が読み込まれない。
+chmod 644 docker/mysql/my.cnf
+```
+
 ## 基本操作
 
 ```bash
