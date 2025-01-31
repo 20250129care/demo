@@ -46,7 +46,7 @@ services:
       - gradle-cache:/root/.gradle
     working_dir: /app
     command: >
-      sh -c "./gradlew clean build --no-daemon --refresh-dependencies &&
+      sh -c "sh ./gradlew clean build --no-daemon --refresh-dependencies &&
       java -jar /app/build/libs/demo-0.0.1-SNAPSHOT.jar"
 
 volumes:
