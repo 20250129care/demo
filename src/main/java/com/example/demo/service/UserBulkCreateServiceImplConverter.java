@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class UserBulkCreateServiceImplConverter {
 
+    /** IDのフォーマット。 */
     private final static String FORMAT = "%s_%02d";
 
     // NOTE: @Autowiredするクラスはprivate finalで定義し、@RequiredArgsConstructorでインジェクションする

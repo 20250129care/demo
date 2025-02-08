@@ -13,6 +13,7 @@ import lombok.Value;
 @Value
 public class DepartmentResult {
 
+    /** データリスト。 */
     private List<DepartmentResultData> list;
 
 }

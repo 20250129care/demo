@@ -7,16 +7,22 @@ package com.example.demo.constant;
  */
 public class OperationConstants {
 
+    /** ユーザ登録。 */
     public static final String USER_CREATE = "ユーザ登録";
 
+    /** ユーザ更新。 */
     public static final String USER_UPDATE = "ユーザ更新";
 
+    /** ユーザ検索。 */
     public static final String USER_SEARCH = "ユーザ検索";
 
+    /** ユーザ登録（複数）。 */
     public static final String USER_BULK_CREATE = "ユーザ登録（複数）";
 
+    /** ユーザ更新（複数）。 */
     public static final String USER_BULK_UPDATE = "ユーザ更新（複数）";
 
+    /** 部署全件取得。 */
     public static final String DEPARTMENT_FETCH_ALL = "部署全件取得";
 
     /**
