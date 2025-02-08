@@ -53,7 +53,7 @@ docker compose restart wiremock
 
 ```bash
 # ユーザ一覧取得
-curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"begin_updated_at\":\"2025-01-01\",\"page_no\":1,\"page_size\":100}"  http://localhost:8080/api/users/search
+curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"begin_updated_at\":\"2025-01-01\",\"page_no\":1,\"page_size\":100}" http://localhost:8080/api/users/search
 
 # ユーザ作成
 curl -X POST -H "X-Operator: 0001" -H "Content-Type: application/json" -d "{\"family_name\":\"田中\",\"first_name\":\"太郎\",\"dept_id\":\"01\"}" http://localhost:8080/api/users/create
@@ -85,4 +85,53 @@ curl http://localhost:8080/api/actuator/health
 
 # カバレッジ出力ディレクトリ
 ./build/reports/jacoco
+```
+
+## クラスのテンプレート
+
+```java
+// 変数、メソッドの定義順番メモ
+public class TemplateClass {
+
+    // 1. 定数
+    private static final String staticFinalProp = "定数";
+
+    // 2. 静的変数
+    private static String staticProp = "静的変数";
+
+    // 3. インジェクションされたfinal変数
+    private final String finalInjectedProp;
+
+    // 4. インジェクションされた変数
+    @Autowired
+    private String injectedProp;
+
+    // 5. final変数
+    private final String finalProp = "final変数";
+
+    // 6. インスタンス変数
+    private String prop = "インスタンス変数";
+
+    // 7. コンストラクタ
+    public TemplateClass(String finalInjectedProp) {
+        this.finalInjectedProp = finalInjectedProp;
+    }
+    
+    // 8. ゲッター
+    public void getProp() {
+    }
+
+    // 9. セッター
+    public void setProp() {
+    }
+
+    // 10. パブリックメソッド
+    public void publicMethod() {
+    }
+
+    // 11. プライベートメソッド
+    private void privateMethod() {
+    }
+
+}
 ```
